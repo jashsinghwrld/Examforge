@@ -5,13 +5,15 @@ Updated to use the new google.genai package.
 """
 
 import os
+from pathlib import Path
 from google import genai
 from google.genai import types
 from fastapi import HTTPException
 from dotenv import load_dotenv
 
-# Load .env file explicitly
-load_dotenv()
+# Load .env file explicitly (reliable regardless of current working directory)
+_ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=_ENV_PATH)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")

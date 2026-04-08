@@ -14,10 +14,12 @@ Features:
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env file at startup
-load_dotenv()
+# Load .env file at startup (reliable regardless of current working directory)
+_ENV_PATH = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=_ENV_PATH)
 
 from core.dataset_loader import DatasetLoader
 from routes.ask import router as ask_router
