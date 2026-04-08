@@ -51,6 +51,8 @@ class SearchResponse(BaseModel):
     total_results: int
     results: list[TopicResult]
     ai_summary: str | None
+    used_fallback: bool = False
+    fallback_reason: str | None = None
 
 
 # ── Route ────────────────────────────────────────────────────────────────────
@@ -107,14 +109,31 @@ async def search(request: Request, body: SearchRequest):
 
     # Generate AI summary if requested
     ai_summary = None
+    used_fallback = False
+    fallback_reason: str | None = None
     if body.include_summary and matched_entries:
         prompt = PromptBuilder.build_search_prompt(body.query, matched_entries)
         client = get_gemini_client()
-        ai_summary = client.generate(prompt, temperature=0.3)
+        try:
+            ai_summary = client.generate(prompt, temperature=0.3)
+        except HTTPException as he:
+            detail_str = he.detail if isinstance(he.detail, str) else str(he.detail)
+            if he.status_code in (429, 503):
+                used_fallback = True
+                fallback_reason = detail_str
+                ai_summary = (
+                    "NOTE: Using fallback mode (Gemini temporarily unavailable or rate-limited).\n"
+                    f"Reason: {detail_str}\n\n"
+                    "You can still use the topic list below. Try again later for an AI-generated summary."
+                )
+            else:
+                raise
 
     return SearchResponse(
         query=body.query,
         total_results=len(results),
         results=results,
         ai_summary=ai_summary,
+        used_fallback=used_fallback,
+        fallback_reason=fallback_reason,
     )

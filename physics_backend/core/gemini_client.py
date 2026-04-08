@@ -89,6 +89,12 @@ class GeminiClient:
                     status_code=401,
                     detail="Invalid or missing Gemini API key. Please check your GEMINI_API_KEY.",
                 )
+            # Model overload / temporary unavailability (often 503)
+            if any(s in el for s in ("503", "unavailable", "high demand", "overloaded", "try again later")):
+                raise HTTPException(
+                    status_code=503,
+                    detail="Gemini is temporarily unavailable due to high demand. Please try again shortly.",
+                )
             # Google often uses wording other than "rate" / "quota"
             if any(
                 s in el

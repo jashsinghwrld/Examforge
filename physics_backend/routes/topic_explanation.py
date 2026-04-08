@@ -41,8 +41,8 @@ def _set_cached(topic: str, module: str | None, text: str) -> None:
 
 
 def _should_fallback_from_gemini_error(status_code: int | None, detail: str) -> bool:
-    """True when Gemini failed due to quota / rate limits (many phrasings)."""
-    if status_code == 429:
+    """True when Gemini failed due to overload / quota / rate limits (many phrasings)."""
+    if status_code in (429, 503):
         return True
     if status_code not in (None, 500):
         return False
@@ -50,6 +50,11 @@ def _should_fallback_from_gemini_error(status_code: int | None, detail: str) -> 
     return any(
         s in d
         for s in (
+            "high demand",
+            "unavailable",
+            "overloaded",
+            "try again later",
+            "503",
             "rate limit",
             "quota",
             "resource exhausted",
@@ -68,10 +73,12 @@ def _fallback_exam_format(topic: str, entry: dict | None) -> str:
     """
     if not entry:
         return (
+            "> NOTE: Using fallback mode (Gemini temporarily unavailable or rate-limited).\n"
+            "> Reason: The AI model could not be reached right now, so this response is generated from local dataset info only.\n\n"
             "## Definition\n"
             f"{topic}: Not available in dataset.\n\n"
             "## Explanation\n"
-            "Gemini is currently rate-limited, and this topic was not found in the local dataset. "
+            "Gemini is temporarily unavailable and this topic was not found in the local dataset. "
             "Please try again shortly.\n\n"
             "## Derivation\n"
             "Not applicable for this topic.\n\n"
@@ -109,6 +116,8 @@ def _fallback_exam_format(topic: str, entry: dict | None) -> str:
         key_points.append(f"- Exam Tip: {entry.get('exam_tip')}")
 
     return (
+        "> NOTE: Using fallback mode (Gemini temporarily unavailable or rate-limited).\n"
+        "> Reason: The AI model could not be reached right now, so this response is generated from local dataset info only.\n\n"
         "## Definition\n"
         f"{definition}\n\n"
         "## Explanation\n"
@@ -142,6 +151,8 @@ class TopicExplanationResponse(BaseModel):
     explanation: str
     matched_topic: str | None
     source_module: str | None
+    used_fallback: bool = False
+    fallback_reason: str | None = None
 
 
 @router.post(
@@ -190,6 +201,8 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
     )
 
     client = get_gemini_client()
+    used_fallback = False
+    fallback_reason: str | None = None
     try:
         explanation = client.generate(prompt, temperature=0.3)
     except HTTPException as he:
@@ -198,6 +211,8 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
         if _should_fallback_from_gemini_error(he.status_code, detail_str):
             best_entry = matched_entries[0] if matched_entries else None
             explanation = _fallback_exam_format(body.topic, best_entry)
+            used_fallback = True
+            fallback_reason = detail_str
         else:
             raise
     except Exception as e:
@@ -206,6 +221,8 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
         if _should_fallback_from_gemini_error(None, msg):
             best_entry = matched_entries[0] if matched_entries else None
             explanation = _fallback_exam_format(body.topic, best_entry)
+            used_fallback = True
+            fallback_reason = msg
         else:
             raise
 
@@ -217,5 +234,7 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
         explanation=explanation,
         matched_topic=matched_topic,
         source_module=source_module,
+        used_fallback=used_fallback,
+        fallback_reason=fallback_reason,
     )
 

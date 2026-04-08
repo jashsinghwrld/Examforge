@@ -275,7 +275,26 @@ export default function TopicsPage() {
               )}
 
               {!topicExplanationLoading && !topicExplanationError && topicExplanation?.explanation && (
-                <MarkdownContent content={topicExplanation.explanation} />
+                <div className="space-y-4">
+                  {topicExplanation?.used_fallback && (
+                    <div className="rounded-2xl border border-accent-yellow/30 bg-accent-yellow/10 p-4">
+                      <p className="text-sm font-semibold text-text-primary mb-1">
+                        Fallback mode used
+                      </p>
+                      <p className="text-xs text-text-muted leading-relaxed">
+                        Gemini was unavailable or rate-limited, so this explanation was generated using local dataset information.
+                        {topicExplanation?.fallback_reason ? (
+                          <>
+                            {' '}
+                            <span className="text-text-secondary">Reason:</span>{' '}
+                            <span className="text-text-secondary break-words">{topicExplanation.fallback_reason}</span>
+                          </>
+                        ) : null}
+                      </p>
+                    </div>
+                  )}
+                  <MarkdownContent content={topicExplanation.explanation} />
+                </div>
               )}
             </div>
           </section>
