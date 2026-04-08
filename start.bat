@@ -50,20 +50,20 @@ echo.
 
 :: Check .env file
 echo [3/5] Checking backend configuration...
-if not exist "physics_backend\.env" (
+if not exist "backend\.env" (
     echo .env file not found. Creating from template...
-    if exist "physics_backend\.env.example" (
-        copy "physics_backend\.env.example" "physics_backend\.env" >nul
+    if exist "backend\.env.example" (
+        copy "backend\.env.example" "backend\.env" >nul
     ) else (
-        echo ERROR: physics_backend\.env.example not found.
-        echo Please create physics_backend\.env with at least GEMINI_API_KEY=...
+        echo ERROR: backend\.env.example not found.
+        echo Please create backend\.env with at least GEMINI_API_KEY=...
         pause
         exit /b 1
     )
     echo.
     echo ============================================================
     echo  ACTION REQUIRED:
-    echo  Open physics_backend\.env in Notepad and replace:
+    echo  Open backend\.env in Notepad and replace:
     echo  GEMINI_API_KEY=your_gemini_api_key_here
     echo  with your actual key from aistudio.google.com/app/apikey
     echo ============================================================
@@ -75,7 +75,7 @@ echo.
 
 :: Setup Backend
 echo [4/5] Setting up backend...
-cd physics_backend
+cd backend
 
 if not exist "venv" (
     echo Creating virtual environment...
@@ -92,7 +92,7 @@ echo.
 
 :: Setup Frontend
 echo [5/5] Setting up frontend...
-cd physics_frontend
+cd frontend
 
 if not exist "node_modules" (
     echo Installing frontend dependencies, please wait...
@@ -119,13 +119,13 @@ echo ============================================================
 echo.
 
 :: Start backend in new window
-start "RGPV Physics - Backend" cmd /k "cd /d %~dp0physics_backend && call venv\Scripts\activate.bat && uvicorn main:app --reload --port 8000"
+start "RGPV Physics - Backend" cmd /k "cd /d %~dp0backend && call venv\Scripts\activate.bat && uvicorn main:app --reload --port 8000"
 
 :: Wait for backend to start
 timeout /t 4 /nobreak >nul
 
 :: Start frontend in new window
-start "RGPV Physics - Frontend" cmd /k "cd /d %~dp0physics_frontend && npm run dev"
+start "RGPV Physics - Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
 
 :: Wait then open browser
 timeout /t 4 /nobreak >nul

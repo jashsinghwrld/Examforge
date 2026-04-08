@@ -13,11 +13,11 @@ It uses curated, pre-defined datasets (module-wise) to understand what the user 
 
 ## Project structure
 
-- `physics_backend/`: FastAPI backend (Python)
+- `backend/`: FastAPI backend (Python)
   - `main.py`: API app entrypoint
   - `routes/`: endpoints (`/ask`, `/explain`, `/topic-explanation`, `/exam-answer`, `/search`, `/topics`)
   - `dataset/`: module-wise JSON datasets used as grounding/context
-- `physics_frontend/`: React + Vite frontend (JavaScript) with Tailwind
+- `frontend/`: React + Vite frontend (JavaScript) with Tailwind
 - `start.bat`: one-command local setup + run (Windows)
 - `stop.bat`: stop local servers (Windows)
 
@@ -47,10 +47,10 @@ It uses curated, pre-defined datasets (module-wise) to understand what the user 
 
 ### 1) Configure your Gemini key
 
-The backend reads `GEMINI_API_KEY` from `physics_backend/.env`.
+The backend reads `GEMINI_API_KEY` from `backend/.env`.
 
-- If `physics_backend/.env` does not exist, `start.bat` will create it from `physics_backend/.env.example`.
-- Then open `physics_backend/.env` and set:
+- If `backend/.env` does not exist, `start.bat` will create it from `backend/.env.example`.
+- Then open `backend/.env` and set:
 
 ```env
 GEMINI_API_KEY=your_real_key_here
@@ -68,9 +68,9 @@ start.bat
 
 This will:
 - check Python + Node
-- create a backend virtualenv at `physics_backend/venv` (if missing)
-- install backend deps from `physics_backend/requirements.txt`
-- install frontend deps in `physics_frontend/node_modules` (if missing)
+- create a backend virtualenv at `backend/venv` (if missing)
+- install backend deps from `backend/requirements.txt`
+- install frontend deps in `frontend/node_modules` (if missing)
 - start:
   - **Backend**: `http://localhost:8000`
   - **Frontend**: `http://localhost:5173`
