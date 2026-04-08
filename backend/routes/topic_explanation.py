@@ -200,10 +200,10 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
         context=context,
     )
 
-    client = get_gemini_client()
     used_fallback = False
     fallback_reason: str | None = None
     try:
+        client = get_gemini_client()
         explanation = client.generate(prompt, temperature=0.3)
     except HTTPException as he:
         # FastAPI HTTPException from gemini_client — use fallback on quota/rate-style errors
@@ -216,9 +216,14 @@ async def topic_explanation(request: Request, body: TopicExplanationRequest):
         else:
             raise
     except Exception as e:
-        # Non-HTTP errors from SDK — still try fallback if message looks like rate limit
+        # SDK errors OR missing API key — still try fallback when appropriate
         msg = str(e)
-        if _should_fallback_from_gemini_error(None, msg):
+        if "gemini_api_key" in msg.lower() or "environment variable is not set" in msg.lower():
+            best_entry = matched_entries[0] if matched_entries else None
+            explanation = _fallback_exam_format(body.topic, best_entry)
+            used_fallback = True
+            fallback_reason = "GEMINI_API_KEY is not set (using dataset-only fallback)."
+        elif _should_fallback_from_gemini_error(None, msg):
             best_entry = matched_entries[0] if matched_entries else None
             explanation = _fallback_exam_format(body.topic, best_entry)
             used_fallback = True

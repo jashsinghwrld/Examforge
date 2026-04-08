@@ -113,8 +113,8 @@ async def search(request: Request, body: SearchRequest):
     fallback_reason: str | None = None
     if body.include_summary and matched_entries:
         prompt = PromptBuilder.build_search_prompt(body.query, matched_entries)
-        client = get_gemini_client()
         try:
+            client = get_gemini_client()
             ai_summary = client.generate(prompt, temperature=0.3)
         except HTTPException as he:
             detail_str = he.detail if isinstance(he.detail, str) else str(he.detail)
@@ -125,6 +125,18 @@ async def search(request: Request, body: SearchRequest):
                     "NOTE: Using fallback mode (Gemini temporarily unavailable or rate-limited).\n"
                     f"Reason: {detail_str}\n\n"
                     "You can still use the topic list below. Try again later for an AI-generated summary."
+                )
+            else:
+                raise
+        except Exception as e:
+            msg = str(e)
+            if "gemini_api_key" in msg.lower() or "environment variable is not set" in msg.lower():
+                used_fallback = True
+                fallback_reason = "GEMINI_API_KEY is not set (using dataset-only fallback)."
+                ai_summary = (
+                    "NOTE: Using fallback mode (Gemini not configured).\n"
+                    "Reason: GEMINI_API_KEY is not set.\n\n"
+                    "You can still use the topic list below. Add the API key later to enable AI summaries."
                 )
             else:
                 raise
