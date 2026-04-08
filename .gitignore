@@ -18,6 +18,10 @@ node_modules/
 dist/
 .vite/
 
+# --- Legacy folders (safe to ignore) ---
+physics_backend/
+physics_frontend/
+
 # --- OS / Editor ---
 .DS_Store
 Thumbs.db

@@ -95,6 +95,10 @@ stop.bat
   - backend uses **8000**
   - frontend uses **5173**
 
+## Fallback mode (when Gemini is down)
+
+If Gemini returns **503 (high demand)** or **429 (rate limited)**, the app will switch to a **dataset-only fallback** for certain features and will clearly show a **“Fallback mode used”** message with the reason.
+
 ## Future upgrades (planned)
 
 - diagrams in datasets
