@@ -1,0 +1,15 @@
+# RGPV Engineering Physics API — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# Google Gemini AI (new SDK)
+google-genai
+
+# Environment variable management
+python-dotenv==1.0.1
+
+# Data validation
+pydantic==2.9.2
