@@ -95,5 +95,6 @@ Examforge isn't just a generic wrapper for AI. It uses a **Hybrid Grounding Arch
 ---
 
 <p align="center">
-  <i>Developed with ❤️ for RGPV Students.</i>
+  <i>Developed with ❤️ for RGPV Students.</i><br>
+  <sub>This project was crafted with the extensive assistance of AI agents.</sub>
 </p>
