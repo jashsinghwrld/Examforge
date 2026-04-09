@@ -1,107 +1,99 @@
-# Examforge
+# <p align="center">🛠️ EXAMFORGE</p>
 
-Examforge is a data-driven, domain-specific web app that (in its current stage) covers **Engineering Physics** as per the **RGPV Bhopal** syllabus for Semester 1/2.
+<p align="center">
+  <img src="assets/hero.png" alt="Examforge Hero" width="800">
+</p>
 
-It uses curated, pre-defined datasets (module-wise) to understand what the user is asking, then uses **Gemini AI** to generate accurate, exam-oriented explanations and answers in an RGPV-friendly format.
+<p align="center">
+  <strong>The Ultimate AI-Powered Study Companion for RGPV Students.</strong>
+</p>
 
-## Purpose
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind">
+  <img src="https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google-gemini&logoColor=white" alt="Gemini">
+</p>
 
-Examforge helps students become **exam-ready** with to-the-point explanations and exam-format answers aligned to the RGPV pattern.
+---
 
-## What it does
+## 🚀 Overview
 
-- **To-the-point explanations** for Engineering Physics topics
-- **Exam-ready answer generation** (structured, 7-mark style)
-- **Topic search** across the dataset
-- **Topic listing** to explore what’s available
+**Examforge** is a sophisticated, data-driven web application designed to help students master the **RGPV Bhopal** syllabus (Engineering Physics focus). It bridges the gap between raw textbooks and exam-day performance by generating structured, high-scoring answers ground in curated academic datasets.
 
-## Project structure
+### ✨ Key Features
 
-- `backend/`: FastAPI backend (Python)
-  - `main.py`: API app entrypoint
-  - `routes/`: endpoints (`/ask`, `/explain`, `/topic-explanation`, `/exam-answer`, `/search`, `/topics`)
-  - `dataset/`: module-wise JSON datasets used as grounding/context
-- `frontend/`: React + Vite frontend (JavaScript) with Tailwind
-- `start.bat`: one-command local setup + run (Windows)
-- `stop.bat`: stop local servers (Windows)
+- **🎯 Exam-Ready Answers**: Generates structured, 7-mark style answers optimized for the RGPV pattern.
+- **📚 Curated Datasets**: Grounding AI responses in verified syllabus-specific data to prevent hallucination.
+- **⚡ Real-time Explanations**: Deep-dives into complex topics with simple, intuitive breakdowns.
+- **🔍 Intelligent Search**: Quickly find any topic across the entire module library.
+- **🛠️ Zero-Config Setup**: One-click startup script for local execution.
 
-## Tech stack
+---
 
-- **Backend**: FastAPI, Uvicorn, python-dotenv, google-genai, Pydantic
-- **Frontend**: React, Vite, TailwindCSS, React Router, lucide-react
+## 🛠️ Technology Stack
 
-## How I built it (my POV)
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | [FastAPI](https://fastapi.tiangolo.com/), Python 3.11+, Uvicorn |
+| **Frontend** | [React](https://reactjs.org/), [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/) |
+| **AI Intelligence** | [Google Gemini Flash 1.5](https://aistudio.google.com/) |
+| **State Management** | Context API & Hooks |
 
-- I wanted an app that helps students become **exam-ready**, not just “understand concepts”.
-- I prepared **module-wise datasets** from reliable sources so the app can stay aligned with the syllabus and the expected answer style.
-- I built a **FastAPI backend** that loads the dataset once at startup and exposes simple endpoints for:
-  - answering questions
-  - explaining topics
-  - generating structured exam answers
-  - searching and listing topics
-- I built a **React frontend** to provide a clean UI to interact with the backend.
-- I added `start.bat` and `stop.bat` so anyone can run it locally without manual setup steps.
+---
 
-## Run locally (Windows)
+## 📂 Project Structure
 
-### Prerequisites
-
-- **Python 3.11+** (3.11 or 3.12 recommended)
-- **Node.js (LTS recommended)**
-
-### 1) Configure your Gemini key
-
-The backend reads `GEMINI_API_KEY` from `backend/.env`.
-
-- If `backend/.env` does not exist, `start.bat` will create it from `backend/.env.example`.
-- Then open `backend/.env` and set:
-
-```env
-GEMINI_API_KEY=your_real_key_here
+```bash
+├── 📁 backend/             # FastAPI Python Server
+│   ├── 📁 dataset/         # Module-wise JSON grounding data
+│   ├── 📁 routes/          # API endpoint logic (Explain, Ask, Search)
+│   └── 📜 main.py          # Application entrypoint
+├── 📁 frontend/            # React/Vite/Tailwind Application
+│   └── 📁 src/             # UI Components & Logic
+├── 📁 assets/              # Premium visual branding
+├── 📜 start.bat            # Automated Windows startup script
+└── 📜 stop.bat             # Graceful shutdown script
 ```
 
-You can create a key from `aistudio.google.com/app/apikey`.
+---
 
-### 2) Start everything
+## 🏁 Getting Started (Windows)
 
-From the repo root, double-click or run:
+### 1️⃣ Prerequisites
+- **Python 3.11 or 3.12** installed and added to PATH.
+- **Node.js (LTS)** installed.
 
+### 2️⃣ Configure Gemini API
+The app uses Google's Gemini AI. You'll need an API key:
+1. Get a free key from [AI Studio](https://aistudio.google.com/app/apikey).
+2. The `start.bat` script will create a `backend/.env` for you.
+3. Open `backend/.env` and paste your key:
+   ```env
+   GEMINI_API_KEY=your_key_here
+   ```
+
+### 3️⃣ Launch
+Simply double-click:
 ```bash
 start.bat
 ```
+This script handles virtual environment creation, dependency installation, and launches both servers automatically.
 
-This will:
-- check Python + Node
-- create a backend virtualenv at `backend/venv` (if missing)
-- install backend deps from `backend/requirements.txt`
-- install frontend deps in `frontend/node_modules` (if missing)
-- start:
-  - **Backend**: `http://localhost:8000`
-  - **Frontend**: `http://localhost:5173`
-  - **API Docs**: `http://localhost:8000/docs`
+---
 
-### 3) Stop servers
+## 🧠 How it Works
 
-Run:
+Examforge isn't just a generic wrapper for AI. It uses a **Hybrid Grounding Architecture**:
 
-```bash
-stop.bat
-```
+1.  **Retrieval**: When you ask a question, the system searches its local **JSON datasets** (Module 1-5) for relevant technical context.
+2.  **Context Injection**: This context is injected into a specialized "Exam-Expert" prompt.
+3.  **Synthesis**: Gemini AI synthesizes the answer, ensuring it uses the correct terminology and structure required by RGPV examiners.
+4.  **Fallback**: If the AI service is unavailable, the system gracefully switches to **Dataset-Only Mode**, providing the raw information from the verified modules.
 
-## Notes
+---
 
-- **Do not commit secrets**: real `.env` files are intentionally ignored by git.
-- If ports are already in use:
-  - backend uses **8000**
-  - frontend uses **5173**
-
-## Fallback mode (when Gemini is down)
-
-If Gemini returns **503 (high demand)** or **429 (rate limited)**, the app will switch to a **dataset-only fallback** for certain features and will clearly show a **“Fallback mode used”** message with the reason.
-
-## Future upgrades (planned)
-
-- diagrams in datasets
-- preparation strategy generation (based on time left)
-- PYQ analysis
-
+<p align="center">
+  <i>Developed with ❤️ for RGPV Students.</i>
+</p>
